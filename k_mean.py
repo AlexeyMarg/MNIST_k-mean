@@ -25,9 +25,31 @@ class k_mean:
 
     def rmse(self, loaded_vector, predict_vector):
         summ = 0
-        for i in (loaded_vector - predict_vector):
+        for i in (loaded_vector[1:] - predict_vector):
             summ += pow(i, 2)
         return sqrt(summ / self.dimension)
 
-    def run(self, predict_vector):
-        pass
+    def run_single(self, predict_vector):
+        for i in self.stored_data:
+            deviation = self.rmse(i.transpose(), predict_vector)
+            self.nearest_vectors = np.append(self.nearest_vectors, [[deviation, i[0]]], axis=0)
+            self.nearest_vectors = self.nearest_vectors[np.argsort(self.nearest_vectors[:,0])]
+            self.nearest_vectors  = self.nearest_vectors[:-1]
+
+        possible_classes = []
+        for i in self.nearest_vectors:
+            if i[1] not in possible_classes and i[1] != -1:
+                possible_classes.append(i[1])
+        for i in range(len(possible_classes)):
+            possible_classes[i] = [possible_classes[i], 0]
+        for i in self.nearest_vectors:
+            for j in possible_classes:
+                if i[1] == j[0]:
+                    j[1] += 1
+
+        for i in possible_classes:
+            i[0], i[1] = i[1], i[0]
+
+        return int(sorted(possible_classes)[0][1])
+
+
