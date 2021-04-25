@@ -12,7 +12,7 @@ class k_mean:
             self.nearest_vectors[i][0] = 255
             self.nearest_vectors[i][1] = -1
 
-    def load_data(self, path):
+    def train(self, path):
         data = []
         train_set_file = open(path, 'r')
         while True:
@@ -51,5 +51,28 @@ class k_mean:
             i[0], i[1] = i[1], i[0]
 
         return int(sorted(possible_classes)[0][1])
+
+    def test(self, train_path, test_path):
+        correct_answers = 0
+        wrong_answers = 0
+        print('Start training')
+        self.train(train_path)
+        print('Start testing')
+        test_set_file = open(test_path, 'r')
+        while True:
+            data = test_set_file.readline().split(',')
+            if len(data) == 0:
+                break
+            data = np.asfarray(data)
+            correct_label = data[0]
+            predict_vector = data[1:]
+            label = self.run_single(predict_vector)
+            if label == correct_label:
+                correct_answers += 1
+            else:
+                wrong_answers += 1
+            print('Total: ', correct_answers+wrong_answers, 'Correct: ', correct_answers, 'Incorrect:', wrong_answers)
+        test_set_file.close()
+
 
 
