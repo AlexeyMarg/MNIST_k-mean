@@ -1,11 +1,12 @@
 import numpy as np
+from math import sqrt, pow
 
 class k_mean:
     def __init__(self, k, dimension, max_deviation):
         self.k = k
         self.dimension = dimension
         self.max_deviation = max_deviation
-        self.stored_data = []
+        self.stored_data = np.empty((0, 0))
         self.nearest_vectors = np.zeros((k, 2), float)
         for i in range(k):
             self.nearest_vectors[i][0] = 255
@@ -23,7 +24,10 @@ class k_mean:
         self.stored_data = np.asfarray(data)
 
     def rmse(self, loaded_vector, predict_vector):
-        pass
+        summ = 0
+        for i in (loaded_vector - predict_vector):
+            summ += pow(i, 2)
+        return sqrt(summ / self.dimension)
 
     def run(self, predict_vector):
         pass
